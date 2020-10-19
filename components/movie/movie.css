@@ -1,0 +1,30 @@
+.ant-card-body {
+	display: flex;
+}
+
+.ant-image .ant-image-img {
+	width: 180px;
+}
+
+.text-content {
+	padding-left: 10px;
+}
+
+.rate {
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	min-width: 30px;
+	border: 3px solid;
+	border-radius: 50%;
+	font-weight: 700;
+}
+
+ul.ant-rate {
+	font-size: 18px;
+}
+
+.movie-genres {
+	display: flex;
+	flex-wrap: wrap;
+}
