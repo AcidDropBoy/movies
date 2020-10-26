@@ -147,7 +147,7 @@ export default class App extends Component {
 			currentSearch,
 			currentTab,
 			ratingMaxPage,
-			maxPage,
+         maxPage,
 			currentPage,
 		} = this.state;
 		
