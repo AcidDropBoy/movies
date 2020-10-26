@@ -5,27 +5,27 @@ import PropTypes from 'prop-types';
 
 export default class Menu extends Component {
 	static defaultProps = {
-		change: false,
+		currentTab: false,
 		changeMovies: () => {},
 	};
 
 	static propTypes = {
-		change: PropTypes.bool,
+		currentTab: PropTypes.bool,
 		changeMovies: PropTypes.func,
 	};
 
 	render() {
-   	const { change, changeMovies } = this.props;
+   	const { currentTab, changeMovies } = this.props;
    	return (
       	<div className="menu">
 				<button 
-					className={clsx('menu-btn', !change && 'active')}
+					className={clsx('menu-btn', !currentTab && 'active')}
 					type="button" onClick={() => changeMovies(false)}
 				>
 					Поиск
       		</button>
       		<button
-         		className={clsx('menu-btn', change && 'active')}
+         		className={clsx('menu-btn', currentTab && 'active')}
          		type="button"
          		onClick={() => changeMovies(true)}
       		>

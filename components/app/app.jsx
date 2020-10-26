@@ -17,7 +17,8 @@ export default class App extends Component {
 		error: false,
 		newSearch: '',
 		currentSearch: '',
-		change: false,
+		currentTab: false,
+		ratingMaxPage: null,
    	maxPage: null,
 		currentPage: 1,
 	};
@@ -73,27 +74,29 @@ export default class App extends Component {
 		getMoviesRating
 			.getMoviesRating(userSession)
 			.then((res) => {
-				this.setState({ loading: false, error: false, moviesRating: res.results });
+				this.setState({ loading: false, error: false, moviesRating: res.results, ratingMaxPage: res.total_pages });
 			})
 			.catch(this.findError.bind(this));
 	};
 
 	onPushRating = (id, rating) => {
-		const newRating = new ApiMovies();
-		const { userSession } = this.state;
-		const newRatingValue = { value: rating };
-		newRating
-			.postResource(
-				`https://api.themoviedb.org/3/movie/${id}/rating?api_key=8392664136aacdf32c9fa4806fe458ec&guest_session_id=${userSession}`,
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json;charset=utf-8',
-					},
-					body: JSON.stringify(newRatingValue),
-				}
-			)
-			.catch(this.findError.bind(this));
+		if (rating !== 0) {
+			const newRating = new ApiMovies();
+			const { userSession } = this.state;
+			const newRatingValue = { value: rating };
+			newRating
+				.postResource(
+					`https://api.themoviedb.org/3/movie/${id}/rating?api_key=8392664136aacdf32c9fa4806fe458ec&guest_session_id=${userSession}`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json;charset=utf-8',
+						},
+						body: JSON.stringify(newRatingValue),
+					}
+				)
+				.catch(this.findError.bind(this));
+		}
 	};
 
 	pagination = page => {
@@ -108,7 +111,7 @@ export default class App extends Component {
 	};
 
 	changeMovies = (bool) => {
-		this.setState({ change: bool });
+		this.setState({ currentTab: bool });
 		this.getMoviesRating();
 	};
 
@@ -142,12 +145,14 @@ export default class App extends Component {
 			error,
 			newSearch,
 			currentSearch,
-			change,
+			currentTab,
+			ratingMaxPage,
 			maxPage,
 			currentPage,
 		} = this.state;
 		
-		const finalMovies = !change ? movies : moviesRating;
+		const finalMovies = !currentTab ? movies : moviesRating;
+		const finalPage = !currentTab ? maxPage : ratingMaxPage;
 
 		if (!userInternet) {
 			return (
@@ -155,10 +160,10 @@ export default class App extends Component {
 			);
 		};
 
-		if (currentSearch === '' && !change) {
+		if (currentSearch === '' && !currentTab) {
 			return (
 				<div className="container">
-					<Menu change={change} changeMovies={this.changeMovies} />
+					<Menu change={currentTab} changeMovies={this.changeMovies} />
 					<Input
 						autoFocus
 						placeholder="Введите название фильма"
@@ -183,18 +188,10 @@ export default class App extends Component {
 			)
 		};
 
-		if (loading) {
-			return (
-				<div className="loader">
-					<Spin size="large" />
-				</div>
-			);
-		};
-
 		return (
 			<div className="container">
-				<Menu change={change} changeMovies={this.changeMovies} />
-				{ !change ? <Input
+				<Menu change={currentTab} changeMovies={this.changeMovies} />
+				{ !currentTab ? <Input
       			autoFocus
       			placeholder="Введите название фильма"
       			size="large"
@@ -202,20 +199,28 @@ export default class App extends Component {
       			onChange={(event) => this.searchMoviesInput(event.target.value)}
       			onPressEnter={(event) => this.searchMovies(event.target.value)}
       		/> : null }
+				{ !loading ? (
+				<React.Fragment>
 				<MoviesList 
 					movies={finalMovies}
 					moviesGenres={moviesGenres}
 					onPushRating={this.onPushRating}
-					change={change}
+					change={currentTab}
 				/>
 				<Pagination
       			pageSize={20}
       			current={currentPage}
       			onChange={this.pagination}
-        			total={finalMovies.length * maxPage}
+        			total={finalPage}
 					showSizeChanger={false}
 					hideOnSinglePage
       		/>
+				</React.Fragment>)
+				: 
+				(<div className="loader">
+					<Spin size="large" />
+				</div>)
+				}
 			</div>
 		);
 	};

@@ -8,22 +8,22 @@ export default class MoviesList extends Component {
 
 	static defaultProps = {
 		movies: [],
-		change: false,
+		currentTab: false,
 		moviesGenres: [],
 		onPushRating: () => {},
 	};
 
 	static propTypes = {
 		movies: PropTypes.arrayOf(PropTypes.object),
-		change: PropTypes.bool,
+		currentTab: PropTypes.bool,
 		moviesGenres: PropTypes.arrayOf(PropTypes.object),
 		onPushRating: PropTypes.func,
 	};
 
 	render() {
-		const { movies, change, moviesGenres, onPushRating } = this.props;
-		const message = !change ? 'Результатов нет' : 'У вас нет оцененных фильмов';
-		const description = !change
+		const { movies, currentTab, moviesGenres, onPushRating } = this.props;
+		const message = !currentTab ? 'Результатов нет' : 'У вас нет оцененных фильмов';
+		const description = !currentTab
       ? 'К сожалению, по данному запросу не удалось ничего найти. Попробуйте поискать что-нибудь другое.'
 		: 'Поставьте оценку фильму и он отобразится на данной странице';
 		
